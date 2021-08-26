@@ -24,6 +24,7 @@ class MyVaults extends Component {
     }
 
     async componentDidMount() {
+        console.log(this.context)
         this.setState({ contract: this.context.instance });
         this.setState({ accounts: await this.context.accountsPromise });
         this.getMyVaults()
@@ -60,8 +61,8 @@ class MyVaults extends Component {
                         await this.state.contract.methods.getPasswords(i).call({from: this.state.accounts[0]})
                         .then(res => {
                             vaultList.push(
-                                <div>
-                                    <Col style={{paddingBottom: 30}} key={i}>
+                                <div key={i}>
+                                    <Col style={{paddingBottom: 30}}>
                                         <Card text='white' bg="dark" className='cardhover' style={{border: 'none'}}>
                                             {/* <Card.Img variant="top" src="logo192.png" /> */}
                                             <Card.Body>

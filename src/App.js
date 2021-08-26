@@ -17,6 +17,7 @@ class App extends Component {
       paytokenContract: null,
       balance: 0,
       web3: new Web3(window.ethereum),
+      networkId: 0,
     };
   }
 
@@ -26,14 +27,13 @@ class App extends Component {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const balance = this.state.web3.utils.fromWei(await this.state.web3.eth.getBalance(accounts[0]));
+        this.state.web3.eth.net.getId().then((networkId) => {this.setState({networkId})})
         this.setState({ accounts, balance })
         const instance = new this.state.web3.eth.Contract(
           SafeVault.abi,
           "0x4A8c3DdA7ef307FAe6821E0468cEaa70B31533b7"
         );
-        this.setState({contract: instance}, async () => {
-          this.fetchNFTBalance(this.state.contract, accounts[0])
-        })
+        this.setState({contract: instance})
       } catch (error) {
         if (error.code === 4001) { }
         console.log(error)
@@ -59,8 +59,9 @@ class App extends Component {
 
       const web3 = this.state.web3 
 
-      if (this.state.accounts !== null && this.state.contract !== null) {
+      if (this.state.accounts !== null && this.state.contract !== null && this.state.networkId === 4) {
         const instance = this.state.contract
+        this.fetchNFTBalance(instance, this.state.accounts[0])
         return (
           <div className='App'>
             <Router>
@@ -92,7 +93,7 @@ class App extends Component {
         throw new Error();
       }
     } catch (error) {
-      return <div style={{position: 'absolute', top: '25%', margin: 'auto', left: '20%', right: '20%', textAlign: "center", fontSize: 50}}>Loading Web3, accounts, and contract...</div>;
+      return <div style={{position: 'absolute', top: '25%', margin: 'auto', left: '20%', right: '20%', textAlign: "center", fontSize: 50}}>Please connect to the Rinkeby network on MetaMask</div>;
     }
   }
 }

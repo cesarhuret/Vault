@@ -5638,7 +5638,7 @@
     "ethereumjs-util" "^5.0.0"
     "merkle-patricia-tree" "^2.1.2"
 
-"ethereumjs-common@^1.1.0", "ethereumjs-common@^1.5.0":
+"ethereumjs-common@^1.1.0", "ethereumjs-common@^1.5.0", "ethereumjs-common@^1.5.2":
   "integrity" "sha512-hTfZjwGX52GS2jcVO6E2sx4YuFnf0Fhp5ylo4pEPhEffNln7vS59Hr5sLnp3/QCazFLluuBZ+FZ6J5HTp0EqCA=="
   "resolved" "https://registry.npmjs.org/ethereumjs-common/-/ethereumjs-common-1.5.2.tgz"
   "version" "1.5.2"
@@ -13459,7 +13459,7 @@
     "randombytes" "^2.1.0"
     "utf8" "3.0.0"
 
-"web3@^1.4.0":
+"web3@^1.3.6", "web3@^1.4.0":
   "integrity" "sha512-aapKLdO8t7Cos6tZLeeQUtCJvTiPMlLcHsHHDLSBZ/VaJEucSTxzun32M8sp3BmF4waDEmhY+iyUM1BKvtAcVQ=="
   "resolved" "https://registry.npmjs.org/web3/-/web3-1.5.2.tgz"
   "version" "1.5.2"
