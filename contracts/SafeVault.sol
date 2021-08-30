@@ -5,14 +5,14 @@ pragma solidity ^0.8.6;
 
 /// @title Creating the SafeVault
  
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @title  Minting the SafeVault
-/// @notice using ERC721 standards for the SafeVault
+/// @notice using ERC721URIStorage standards for the SafeVault
 /// @author Kesar
 
-contract SafeVault is ERC721 {
+contract SafeVault is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter public totalVaults;
     mapping (address => uint256[]) vaultsIds;
@@ -37,7 +37,7 @@ contract SafeVault is ERC721 {
         owner = msg.sender;
     }
 
-    function mintVault(string memory name) payable public  {
+    function mintVault(string memory tokenURI, string memory name) payable public  {
         if(msg.value >= 0.0001 ether) {
             uint256 newVaultId = totalVaults.current();
     
@@ -47,6 +47,8 @@ contract SafeVault is ERC721 {
             
             uint256[] storage allIds =  vaultsIds[msg.sender];
             allIds.push(newVaultId);
+
+            _setTokenURI(newVaultId, tokenURI);
             
             Vault storage newVault = allVaults[newVaultId];
             newVault.name = name;

@@ -3,9 +3,10 @@ import { BrowserRouter as Router, } from "react-router-dom";
 
 import SafeVault from "./contracts/SafeVault.json";
 import BlockchainContext from "./context/BlockchainContext";
-import Routes from "./Routes";
 import Web3 from "web3";
-import { Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, Row, Tab } from "react-bootstrap";
+import VaultCreator from "./Components/CreateVault";
+import MyVaults from "./Pages/MyVaults";
 
 class App extends Component {
   constructor() {
@@ -31,7 +32,7 @@ class App extends Component {
         this.setState({ accounts, balance })
         const instance = new this.state.web3.eth.Contract(
           SafeVault.abi,
-          "0x4A8c3DdA7ef307FAe6821E0468cEaa70B31533b7"
+          "0x284fB84D42010F5B192D40CEBAB7421dBE0D2eb3"
         );
         this.setState({contract: instance})
       } catch (error) {
@@ -61,6 +62,7 @@ class App extends Component {
 
       if (this.state.accounts !== null && this.state.contract !== null && this.state.networkId === 4) {
         const instance = this.state.contract
+        // console.log(instance)
         this.fetchNFTBalance(instance, this.state.accounts[0])
         return (
           <div className='App'>
@@ -68,23 +70,32 @@ class App extends Component {
               <BlockchainContext.Provider
                 value={{ instance, accountsPromise, web3}}
               >
-                <Navbar bg='none' variant="light" expand="lg" fixed='top' style={{ position: "sticky", top: 0}}>
-                  <Navbar.Brand href='#home'>Planeth</Navbar.Brand>
-                    <Nav.Link>
-                      {" "}
-                      Signed in as: {this.state.accounts[0]}
-                    </Nav.Link>
-
-                  <Navbar.Collapse className='justify-content-end'>
-                    <Nav className='mr-auto'>
-                      <Nav.Link href="/">Home</Nav.Link>
-                      <Nav.Link href="/vaults">My Vaults</Nav.Link>
-                      <Nav.Link href="/mint">Create a Vault</Nav.Link>
-                    </Nav>
-                    <Navbar.Text>Balance: {this.state.contractBalance} Vaults</Navbar.Text>
-                  </Navbar.Collapse>
-                </Navbar>
-                <Routes/>
+                <Container>
+                  <Tab.Container defaultActiveKey="first">
+                    <Row>
+                        <Nav variant="pills" className='mx-auto' style={{padding: '10px'}}>
+                          <Nav.Item>
+                            <Nav.Link eventKey="first">Create Vaults</Nav.Link>
+                          </Nav.Item>
+                          <Nav.Item>
+                            <Nav.Link eventKey="second">My Vaults</Nav.Link>
+                          </Nav.Item>
+                        </Nav>
+                    </Row>
+                    <Row>
+                      <Container>
+                        <Tab.Content>
+                          <Tab.Pane eventKey="first">
+                            <VaultCreator />
+                          </Tab.Pane>
+                          <Tab.Pane eventKey="second">
+                            <MyVaults />
+                          </Tab.Pane>
+                        </Tab.Content>
+                      </Container>
+                    </Row>
+                  </Tab.Container>
+                </Container>
               </BlockchainContext.Provider>
             </Router>
           </div>

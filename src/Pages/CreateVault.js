@@ -98,12 +98,10 @@ class CreateVault extends Component {
         event.preventDefault();
     }
 
-    async deletePassword(event) {
-        console.log(this.state.selectedVault)
-        console.log(this.state.passwordID)
+    async deletePassword(vaultID, passwordID) {
         try {
 
-            await this.state.contract.methods.deletePassword(this.state.selectedVault, this.state.passwordID)
+            await this.state.contract.methods.deletePassword(vaultID, passwordID)
             .send({ from: this.state.accounts[0]})
             .then(res => {
                 console.log('Success', res);
@@ -113,7 +111,6 @@ class CreateVault extends Component {
         } catch(err) {
             console.log(err);
         }
-        event.preventDefault();
     }
 
     render() {
@@ -128,7 +125,7 @@ class CreateVault extends Component {
                     <Button onClick={this.handleSubmit}>Submit</Button>
                 </Card.Body>
             </Card>
-            <Card className='center' style={{width: '40rem'}}>
+            {/* <Card className='center' style={{width: '40rem'}}>
                 <Card.Body>
                     <Card.Title>Add Password</Card.Title>
                     <div className="mb-3">
@@ -148,7 +145,7 @@ class CreateVault extends Component {
                     </div>
                     <Button onClick={this.deletePassword}>Submit</Button>
                 </Card.Body>
-            </Card>
+            </Card> */}
         </div>
         )
     }

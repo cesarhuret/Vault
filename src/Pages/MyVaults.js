@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-import {Button, Card, Col, Container, OverlayTrigger, Popover, Row} from 'react-bootstrap';
+import { Container, Row} from 'react-bootstrap';
 import ReactDOM from 'react-dom';
-import Passwords from "../Components/ViewPasswords";
+import { PasswordModal } from "../Components/ViewPasswords";
 import BlockchainContext from "../context/BlockchainContext";
 
 class MyVaults extends Component {
@@ -20,29 +20,45 @@ class MyVaults extends Component {
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
-
+        this.deletePassword = this.deletePassword.bind(this);
+        this.addPassword = this.addPassword.bind(this);
     }
 
     async componentDidMount() {
-        console.log(this.context)
         this.setState({ contract: this.context.instance });
         this.setState({ accounts: await this.context.accountsPromise });
         this.getMyVaults()
     }
 
-    closeLoader = () => {
-        this.setState({
-            showPasswords: false
-        });
-      }
+    async deletePassword(vaultID, passwordID) {
+        try {
 
-    openLoader = (i, selectedVaultName) => {
-        this.setState({
-            selectedVault: i,
-            selectedVaultName,
-            showPasswords: true
-        });
-      }
+            await this.state.contract.methods.deletePassword(vaultID, passwordID)
+            .send({ from: this.state.accounts[0], gas: 71000})
+            .then(res => {
+                console.log('Success', res);
+            })
+            .catch(err => console.log(err));
+
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    async addPassword(vaultID, passwordName, password) {
+        try {
+
+            await this.state.contract.methods.addPassword(vaultID, passwordName, password)
+            .send({ from: this.state.accounts[0], gas: 150000})
+            .then(res => {
+                console.log('Success', res);
+            })
+            .catch(err => console.log(err));
+
+        } catch(err) {
+            console.log(err);
+        }
+    }
 
     getMyVaults = async () => {
         try {
@@ -58,43 +74,16 @@ class MyVaults extends Component {
                     await this.state.contract.methods.ownerOf(i).call()
                     .then(async res => {
                         if(res === this.state.accounts[0])
-                        await this.state.contract.methods.getPasswords(i).call({from: this.state.accounts[0]})
+                        await this.state.contract.methods.getVaultMetadata(i).call({from: this.state.accounts[0]})
                         .then(res => {
                             vaultList.push(
                                 <div key={i}>
-                                    <Col style={{paddingBottom: 30}}>
-                                        <Card text='white' bg="dark" className='cardhover' style={{border: 'none'}}>
-                                            {/* <Card.Img variant="top" src="logo192.png" /> */}
-                                            <Card.Body>
-                                                <Card.Title style={{color: "white"}}>{res.name}</Card.Title>
-                                                <OverlayTrigger trigger="click" placement="right" overlay={
-                                                <Popover id="popover-basic">
-                                                    <Passwords
-                                                        tokenID={this.state.selectedVault}
-                                                        vaultName={this.state.selectedVaultName}
-                                                    />
-                                                </Popover>}>
-                                                <Button>View Passwords</Button>
-                                                </OverlayTrigger>
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
-
+                                    <PasswordModal name={res.name} passwords={res.passwords} deletePassword={this.deletePassword} addPassword={this.addPassword} tokenID={i}></PasswordModal>
                                 </div>
                             )
                         })
                     })
                 }
-                // vaultList.push(
-                //     <Col style={{paddingBottom: 30}} key={this.state.totalVaultsLength + 1}>
-                //         <Card text='white' bg="dark" className='cardhover' style={{border: 'none'}}>
-                //             {/* <Card.Img variant="top" src="logo192.png" /> */}
-                //             <Card.Body>
-                //                 <Button>Create New Vault</Button>
-                //             </Card.Body>
-                //         </Card>
-                //     </Col>
-                // )
             })
             .catch(err => console.log(err));
             ReactDOM.render(vaultList, document.getElementById('library'))
@@ -114,8 +103,7 @@ class MyVaults extends Component {
         <div className="App">
             <div>
                 <Container style={{textAlign: "left"}}>
-                    <Row className='justify-content-center' id='library'>
-                    </Row>
+                    <Row id='library'></Row>
                 </Container>
             </div>
         </div>
